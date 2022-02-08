@@ -1,0 +1,92 @@
+﻿@model List<DotnetXlSheetImportTamer.Models.VM.NVPCiscoViewModel>
+
+@{
+    ViewData["Title"] = "Search Result";
+}
+
+<div class="container">
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Brand
+
+                </th>
+                <th>
+                    CategoryCode
+                </th>
+                <th>
+                    Manufacturer
+                </th>
+                <th>
+                    Part SKU
+                </th>
+
+                <th>
+                    Item Descriptio
+                </th>
+                <th>
+                    PriceList
+                </th>
+                <th>
+                    Min Discount
+                </th>
+                <th>
+                    Discount Price
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Brand)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CategoryCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor((modelItem => item.Manufacturer))
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartSKU)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PriceList)  <span>$</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MinDiscount)  <span>%</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiscountPrice) <span>$</span>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="col-12 text-center">
+        <div>
+
+
+            @if (ViewBag.CurrentPage - 1 > 0)
+            {
+                <a href="/ImportExcel/SearchResults/?RequiredPage=@(ViewBag.CurrentPage - 1)" class="btn btn-outline-primary btn-lg align-left">Prev</a>
+            }
+            @if (ViewBag.CurrentPage + 1 <= ViewBag.PagesCount)
+            {
+                <a href="/ImportExcel/SearchResults/?RequiredPage=@(ViewBag.CurrentPage + 1)" class="btn btn-outline-primary btn-lg align-right">Next</a>
+            }
+        </div>
+
+
+    </div>
+</div>
+

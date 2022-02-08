@@ -25,17 +25,35 @@ namespace DotnetXlSheetImportTamer.Controllers
             _context = context;
             // _httpClient = httpClient;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int requiredPage = 1)
         {
-            var ImportList = await _context.NVPCiscos.ToListAsync();
+           
+            const int pageSize = 10;
+            decimal rowsCount = await _context.NVPCiscos.CountAsync();
+            var pagesCount = Math.Ceiling(rowsCount / pageSize);
+            if (requiredPage > pagesCount)
+            {
+                requiredPage = 1;
+            }
+            if (requiredPage <= 0)
+            {
+                requiredPage = 1;
+            }
+            requiredPage = requiredPage <= 0 ? 1 : requiredPage;
+            int skipCount = (requiredPage - 1) * pageSize;
+           
+           
+            var ImportList = await _context.NVPCiscos.Skip(skipCount).Take(pageSize).ToListAsync();
             //var model =  GetPagedData(ImportList, requiredPage);
+            ViewBag.CurrentPage = requiredPage;
+            ViewBag.PagesCount = pagesCount;
             return View(ImportList);
         }
         public async Task<IActionResult> GetExel(NVPCiscoViewModel model)
         {
-            var findSKu = await _context.NVPCiscos.FindAsync(model.PartSKU);
+            //var findSKu = await _context.NVPCiscos.FindAsync(model.PartSKU);
             // IEnumerable<NVPCisco> nVPCiscos = new IEnumerable<NVPCisco>();
-            var fileName = "./wwwroot/Excel/20210106_Cisco_NVP_CE_Pricelist_Final.xlsb";
+            var fileName = "./wwwroot/Excel/ExcelTest2.xlsx";
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             //using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
             //{
@@ -120,7 +138,7 @@ namespace DotnetXlSheetImportTamer.Controllers
         /* Pagination Function  */
         private async Task<List<NVPCiscoViewModel>> GetPagedData(IQueryable<NVPCiscoViewModel> result, int requiredPage = 1)
         {
-            const int pageSize = 3;
+            const int pageSize = 10;
             decimal rowsCount = await _context.NVPCiscos.CountAsync();
 
             var pagesCount = Math.Ceiling(rowsCount / pageSize);
@@ -154,6 +172,50 @@ namespace DotnetXlSheetImportTamer.Controllers
 
             var path = "~/Excel/" + selectdResult.PartSKU;
             return File(path, "");
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Browse(int requiredPage = 1)
+        {
+            var result = _context.NVPCiscos
+            .Select(x => new NVPCiscoViewModel
+            {
+
+                Brand = x.Brand,
+                CategoryCode = x.CategoryCode,
+                DiscountPrice = x.DiscountPrice,
+                ItemDescription = x.ItemDescription,
+                Manufacturer = x.Manufacturer,
+                MinDiscount = x.MinDiscount,
+                PartSKU = x.PartSKU,
+                PriceList = x.PriceList
+
+            });
+            var model = await GetPagedData(result, requiredPage);
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task< IActionResult> SearchResults(int requiredPage = 1)
+        {
+            var result = _context.NVPCiscos
+            .Select(x => new NVPCiscoViewModel
+            {
+
+                Brand = x.Brand,
+                CategoryCode = x.CategoryCode,
+                DiscountPrice = x.DiscountPrice,
+                ItemDescription = x.ItemDescription,
+                Manufacturer = x.Manufacturer,
+                MinDiscount = x.MinDiscount,
+                PartSKU = x.PartSKU,
+                PriceList = x.PriceList
+
+            });
+            var model = await GetPagedData(result, requiredPage);
+            return View(model);
         }
 
 

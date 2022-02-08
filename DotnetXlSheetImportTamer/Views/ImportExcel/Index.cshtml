@@ -4,71 +4,102 @@
     ViewData["Title"] = "Index";
 }
 
+    <div class="container">
+        <div>
+            <h4 class="justify-content-center">Search Result</h4>
+            <br />
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form asp-controller="ImportExcel" asp-action="SearchResults" enctype="multipart/form-data" method="post">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient Results" name="term" value="" />
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Brand
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                CategoryCode
-            </th>
-            <th>
-                Brand
-            </th>
-            <th>
-                Manufacturer
-            </th>
-            <th>
-                Part SKU
-            </th>
+                    </th>
+                    <th>
+                        CategoryCode
+                    </th>
+                    <th>
+                        Manufacturer
+                    </th>
+                    <th>
+                        Part SKU
+                    </th>
 
-            <th>
-                ItemDescriptio
-            </th>
-            <th>
-                PriceList
-            </th>
-            <th>
-                MinDiscount
-            </th>
-            <th>
-                DiscountPrice
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Manufacturer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PartSKU)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PriceList)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MinDiscount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DiscountPrice)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PartSKU">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PartSKU">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PartSKU">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    <th>
+                        Item Descriptio
+                    </th>
+                    <th>
+                        PriceList
+                    </th>
+                    <th>
+                        Min Discount
+                    </th>
+                    <th>
+                        Discount Price
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Brand)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CategoryCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor((modelItem => item.Manufacturer))
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PartSKU)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ItemDescription)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PriceList)  <span>$</span>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MinDiscount)  <span>%</span>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DiscountPrice) <span>$</span>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="col-12 text-center">
+            <div>
+
+
+                @if (ViewBag.CurrentPage - 1 > 0)
+                {
+                    <a href="/ImportExcel/Index/?RequiredPage=@(ViewBag.CurrentPage - 1)" class="btn btn-outline-primary btn-lg align-left">Prev</a>
+                }
+                @if (ViewBag.CurrentPage + 1 <= ViewBag.PagesCount)
+                {
+                    <a href="/ImportExcel/Index/?RequiredPage=@(ViewBag.CurrentPage + 1)" class="btn btn-outline-primary btn-lg align-right">Next</a>
+                }
+            </div>
+
+
+        </div>
+    </div>
+
