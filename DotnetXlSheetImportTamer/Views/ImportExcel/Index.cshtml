@@ -1,0 +1,67 @@
+﻿@model List<DotnetXlSheetImportTamer.Models.NVPCisco>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               CategoryCode
+            </th>
+            <th>
+               Brand
+            </th>
+            <th>
+               Manufacturer
+            </th>
+            <th>
+               ItemDescriptio
+            </th>
+            <th>
+               PriceList
+            </th>
+            <th>
+               MinDiscount
+            </th>
+            <th>
+                DiscountPrice
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Brand)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PriceList)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MinDiscount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountPrice)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PartSKU">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PartSKU">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PartSKU">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
