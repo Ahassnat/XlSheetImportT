@@ -9,22 +9,26 @@
     <thead>
         <tr>
             <th>
-               CategoryCode
+                CategoryCode
             </th>
             <th>
-               Brand
+                Brand
             </th>
             <th>
-               Manufacturer
+                Manufacturer
             </th>
             <th>
-               ItemDescriptio
+                Part SKU
+            </th>
+
+            <th>
+                ItemDescriptio
             </th>
             <th>
-               PriceList
+                PriceList
             </th>
             <th>
-               MinDiscount
+                MinDiscount
             </th>
             <th>
                 DiscountPrice
@@ -43,6 +47,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PartSKU)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ItemDescription)
