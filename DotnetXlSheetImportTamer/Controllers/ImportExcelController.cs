@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -165,37 +166,105 @@ namespace DotnetXlSheetImportTamer.Controllers
             return pagedData;
         }
         [HttpGet]
-        public async Task<IActionResult> Download(string id)
+        public async Task<IActionResult> Download()
         {
-            var selectdResult = await _context.NVPCiscos.FindAsync(id);
-            if (selectdResult == null) return NotFound();
-
-            var path = "~/Excel/" + selectdResult.PartSKU;
-            return File(path, "");
-        }
+            var selectedUpload = await _context.NVPCiscos.ToListAsync();
+           // List<NVPCiscoViewModel> selcectedUpload = new List<NVPCiscoViewModel>();                                                             
+            if (selectedUpload != null)
+                if (selectedUpload == null) return NotFound();
 
 
+            // Export Excel File 
+            var res = selectedUpload;
 
-        [HttpGet]
-        public async Task<IActionResult> Browse(int requiredPage = 1)
-        {
-            var result = _context.NVPCiscos
-            .Select(x => new NVPCiscoViewModel
+            // Start exporting to Excel
+            var stream = new MemoryStream();
+
+            using (var xlPackage = new ExcelPackage(stream))
             {
+                // Define a worksheet
+                var worksheet = xlPackage.Workbook.Worksheets.Add("res");
 
-                Brand = x.Brand,
-                CategoryCode = x.CategoryCode,
-                DiscountPrice = x.DiscountPrice,
-                ItemDescription = x.ItemDescription,
-                Manufacturer = x.Manufacturer,
-                MinDiscount = x.MinDiscount,
-                PartSKU = x.PartSKU,
-                PriceList = x.PriceList
+                // Styling
+                var customStyle = xlPackage.Workbook.Styles.CreateNamedStyle("CustomStyle");
+                customStyle.Style.Font.UnderLine = true;
+                customStyle.Style.Font.Color.SetColor(Color.Red);
 
-            });
-            var model = await GetPagedData(result, requiredPage);
-            return View(model);
+                // First row
+                var startRow = 8;
+                var row = startRow;
+
+                worksheet.Cells["A1"].Value = "Search Result";
+                using (var r = worksheet.Cells["A1:H1"])
+                {
+                    r.Merge = true;
+                    r.Style.Font.Color.SetColor(Color.Green);
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(23, 55, 93));
+                }
+
+                worksheet.Cells["A4"].Value = "Brand";
+                worksheet.Cells["B4"].Value = "Category Code";
+                worksheet.Cells["C4"].Value = "Manufacturer";
+
+                worksheet.Cells["D4"].Value = "Part SKU";
+                worksheet.Cells["E4"].Value = "Item Description";
+                worksheet.Cells["F4"].Value = "PriceList";
+                worksheet.Cells["G4"].Value = "Min Discount";
+                worksheet.Cells["H4"].Value = "Discount Price";
+
+
+                worksheet.Cells["A4:H4"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+
+                row = 8;
+                foreach (var rec in res)
+                {
+                    worksheet.Cells[row, 1].Value = rec.Brand;
+                    worksheet.Cells[row, 2].Value = rec.CategoryCode;
+                    worksheet.Cells[row, 3].Value = rec.Manufacturer;
+                    worksheet.Cells[row, 4].Value = rec.PartSKU;
+                    worksheet.Cells[row, 5].Value = rec.ItemDescription;
+                    worksheet.Cells[row, 6].Value = rec.PriceList;
+                    worksheet.Cells[row, 7].Value = rec.MinDiscount;
+                    worksheet.Cells[row, 8].Value = rec.DiscountPrice;
+
+                    row++; // row = row + 1;
+                }
+
+                xlPackage.Workbook.Properties.Title = "Result List";
+                xlPackage.Workbook.Properties.Author = "Abdallah Hassnat";
+
+                xlPackage.Save();
+            }
+
+            stream.Position = 0;
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SearchResult.xlsx");
+            
         }
+
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> Browse(int requiredPage = 1)
+        //{
+        //    var result = _context.NVPCiscos
+        //    .Select(x => new NVPCiscoViewModel
+        //    {
+
+        //        Brand = x.Brand,
+        //        CategoryCode = x.CategoryCode,
+        //        DiscountPrice = x.DiscountPrice,
+        //        ItemDescription = x.ItemDescription,
+        //        Manufacturer = x.Manufacturer,
+        //        MinDiscount = x.MinDiscount,
+        //        PartSKU = x.PartSKU,
+        //        PriceList = x.PriceList
+
+        //    });
+        //    var model = await GetPagedData(result, requiredPage);
+        //    return View(model);
+        //}
 
         [HttpGet]
         public async Task< IActionResult> SearchResults(int requiredPage = 1)
